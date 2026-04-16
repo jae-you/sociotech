@@ -349,6 +349,9 @@
       font-weight: 700;
       font-size: 14px;
       background: #f5efe4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     details.group summary::-webkit-details-marker {
@@ -405,6 +408,21 @@
       scroll-margin-top: 18px;
     }
 
+    .step-status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #eadfcb;
+      color: var(--muted);
+    }
+
+    .step-status.done {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
     @media (max-width: 1100px) {
       .shell { grid-template-columns: 1fr; }
       .sidebar { position: static; }
@@ -424,8 +442,8 @@
       <h2 style="margin-bottom: 10px;">배치 전에 먼저 물어야 할 것</h2>
       <p>기술 자체보다 먼저 문제구조, 기준선, 영향 분배를 입력합니다. 이 프로토타입은 그 정보를 바탕으로 배치의 사회적 결과를 예비적으로 해석합니다.</p>
 
-      <details class="group" open>
-        <summary>1. 문제 구조와 기준선</summary>
+      <details class="group" id="group1" open>
+        <summary><span>1. 문제 구조와 기준선</span><span class="step-status" id="status1">입력중</span></summary>
         <div class="group-body">
           <div class="field">
             <label for="caseName">기술/프로그램 이름</label>
@@ -475,8 +493,8 @@
         </div>
       </details>
 
-      <details class="group">
-        <summary>2. 배치 방식과 영향 분배</summary>
+      <details class="group" id="group2">
+        <summary><span>2. 배치 방식과 영향 분배</span><span class="step-status" id="status2">대기</span></summary>
         <div class="group-body">
           <div class="field">
             <label for="intervention">개입 방식</label>
@@ -555,8 +573,8 @@
         </div>
       </details>
 
-      <details class="group">
-        <summary>3. 시간축 Projection 가정</summary>
+      <details class="group" id="group3">
+        <summary><span>3. 시간축 Projection 가정</span><span class="step-status" id="status3">대기</span></summary>
         <div class="group-body">
           <div class="field">
             <label for="scenarioMode">Projection 시나리오</label>
@@ -1458,6 +1476,76 @@
       banner.classList.add("show");
     }
 
+    function groupHasValues(ids) {
+      return ids.every((id) => {
+        const el = $(id);
+        return el && String(el.value || "").trim() !== "";
+      });
+    }
+
+    function setStepStatus(stepNumber, done, waitingText) {
+      const el = $("status" + stepNumber);
+      if (!el) return;
+      el.textContent = done ? "완료" : waitingText;
+      el.classList.toggle("done", done);
+    }
+
+    function refreshStepStatus() {
+      const group1Done = groupHasValues(["caseName", "coreIssue", "sector", "population", "baseline"]);
+      const group2Done = groupHasValues([
+        "intervention",
+        "failureCost",
+        "benefitTarget",
+        "burdenTarget",
+        "override",
+        "scale",
+        "goal",
+        "dataSensitivity"
+      ]);
+      const group3Done = groupHasValues([
+        "scenarioMode",
+        "adoptionSpeed",
+        "effectMaturity",
+        "dropoff",
+        "riskAccumulation",
+        "guardrailStrength"
+      ]);
+
+      setStepStatus(1, group1Done, "입력중");
+      setStepStatus(2, group2Done, group1Done ? "입력중" : "대기");
+      setStepStatus(3, group3Done, group2Done ? "입력중" : "대기");
+    }
+
+    function openNextGroup(currentGroupId) {
+      const currentIndex = Number(currentGroupId.replace("group", ""));
+      const next = $("group" + (currentIndex + 1));
+      if (next && !next.open) {
+        next.open = true;
+      }
+    }
+
+    function setupGuidedFlow() {
+      const groupFields = {
+        group1: ["caseName", "coreIssue", "sector", "population", "baseline"],
+        group2: ["intervention", "failureCost", "benefitTarget", "burdenTarget", "override", "scale", "goal", "dataSensitivity"],
+        group3: ["scenarioMode", "adoptionSpeed", "effectMaturity", "dropoff", "riskAccumulation", "guardrailStrength"]
+      };
+
+      Object.entries(groupFields).forEach(([groupId, fields]) => {
+        fields.forEach((fieldId) => {
+          $(fieldId).addEventListener("change", () => {
+            refreshStepStatus();
+            if (groupHasValues(fields)) {
+              openNextGroup(groupId);
+            }
+          });
+          $(fieldId).addEventListener("input", refreshStepStatus);
+        });
+      });
+
+      refreshStepStatus();
+    }
+
     function generatePayload() {
       const inputs = collectInputs();
       const impact = scoreImpact(inputs);
@@ -1486,6 +1574,9 @@
     function runScenario() {
       const payload = generatePayload();
       window.lastScenarioPayload = payload;
+      $("group1").open = false;
+      $("group2").open = false;
+      $("group3").open = false;
       render(payload);
       showUpdateBanner(payload);
       $("summaryMetrics").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1505,6 +1596,7 @@
     $("runButton").addEventListener("click", runScenario);
     $("downloadButton").addEventListener("click", downloadJson);
 
+    setupGuidedFlow();
     runScenario();
   </script>
 </body>
