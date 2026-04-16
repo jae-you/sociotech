@@ -627,6 +627,45 @@
         </div>
       </details>
 
+      <details class="group" id="group4">
+        <summary><span>4. 증거 설계와 검증 가능성</span><span class="step-status" id="status4">대기</span></summary>
+        <div class="group-body">
+          <div class="field">
+            <label for="dataAvailability">데이터 가용성</label>
+            <select id="dataAvailability">
+              <option value="medium">부분적으로 있음</option>
+              <option value="low">거의 없음</option>
+              <option value="high">충분히 있음</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="counterfactualQuality">비교군 / counterfactual 설계</label>
+            <select id="counterfactualQuality">
+              <option value="partial">제한적으로 있음</option>
+              <option value="weak">거의 없음</option>
+              <option value="strong">명확히 있음</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="measurementPlan">측정 설계</label>
+            <select id="measurementPlan">
+              <option value="mixed">정성 + 정량 혼합</option>
+              <option value="qual_only">정성 중심</option>
+              <option value="quant_only">정량 중심</option>
+              <option value="weak">아직 약함</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="timeCoverage">시간축 추적 가능성</label>
+            <select id="timeCoverage">
+              <option value="medium">단기 추적 가능</option>
+              <option value="low">일회성 관측만 가능</option>
+              <option value="high">중장기 추적 가능</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
       <div class="button-row">
         <button class="primary" id="runButton">시나리오 생성</button>
         <button class="secondary" id="downloadButton">결과 JSON</button>
@@ -700,6 +739,12 @@
         <div class="eyebrow">Stakeholder Flow</div>
         <div class="section-note">아래 분배 값도 상대적 흐름입니다. 어떤 집단이 순편익을 더 받고, 어떤 집단이 부담을 더 많이 떠안을 가능성이 큰지를 비교하기 위한 값입니다.</div>
         <div id="stakeholderChart" class="stakeholder-chart"></div>
+      </section>
+
+      <section class="card" style="margin-bottom: 16px;">
+        <div class="eyebrow">Methodology Notes</div>
+        <div class="section-note">현재 점수는 통계적으로 추정된 계수가 아니라, baseline, distribution, risk transfer, governance를 빠르게 구조화하기 위한 heuristic scoring입니다. 즉 논문용 최종 모델이 아니라 research framing prototype으로 보는 편이 맞습니다.</div>
+        <div id="methodologyNotes" class="list"></div>
       </section>
 
       <section class="card">
@@ -823,6 +868,27 @@
         weak: "약함",
         medium: "중간",
         strong: "강함"
+      },
+      dataAvailability: {
+        low: "거의 없음",
+        medium: "부분적으로 있음",
+        high: "충분히 있음"
+      },
+      counterfactualQuality: {
+        weak: "거의 없음",
+        partial: "제한적으로 있음",
+        strong: "명확히 있음"
+      },
+      measurementPlan: {
+        qual_only: "정성 중심",
+        quant_only: "정량 중심",
+        mixed: "정성 + 정량 혼합",
+        weak: "아직 약함"
+      },
+      timeCoverage: {
+        low: "일회성 관측만 가능",
+        medium: "단기 추적 가능",
+        high: "중장기 추적 가능"
       }
     };
 
@@ -864,7 +930,11 @@
         effectMaturity: $("effectMaturity").value,
         dropoff: $("dropoff").value,
         riskAccumulation: $("riskAccumulation").value,
-        guardrailStrength: $("guardrailStrength").value
+        guardrailStrength: $("guardrailStrength").value,
+        dataAvailability: $("dataAvailability").value,
+        counterfactualQuality: $("counterfactualQuality").value,
+        measurementPlan: $("measurementPlan").value,
+        timeCoverage: $("timeCoverage").value
       };
     }
 
@@ -1016,10 +1086,12 @@
       );
       const evidenceStrength = clamp(
         Math.round(
-          40 +
-          (inputs.scale === "pilot" ? 8 : inputs.scale === "org" ? 4 : 0) +
-          (inputs.intervention === "approval" || inputs.intervention === "assist" ? 10 : 2) +
-          (inputs.failureCost === "critical" ? -8 : 4)
+          28 +
+          (inputs.dataAvailability === "high" ? 20 : inputs.dataAvailability === "medium" ? 10 : 0) +
+          (inputs.counterfactualQuality === "strong" ? 24 : inputs.counterfactualQuality === "partial" ? 10 : 0) +
+          (inputs.measurementPlan === "mixed" ? 16 : inputs.measurementPlan === "quant_only" || inputs.measurementPlan === "qual_only" ? 8 : 0) +
+          (inputs.timeCoverage === "high" ? 16 : inputs.timeCoverage === "medium" ? 8 : 0) +
+          (inputs.scale === "pilot" ? 4 : 0)
         ),
         0,
         100
@@ -1466,6 +1538,19 @@
           <div>순효과 ${row.net}</div>
         </div>
       `).join("");
+
+      const methodologyNotes = [
+        "현재 가중치는 empirical coefficient가 아니라, 분배효과와 위험전가를 드러내기 위한 heuristic rule입니다.",
+        "`Who` 점수는 취약집단 여부, 혜택 대상, 핵심 이슈가 접근성/배제인지 여부를 함께 반영하도록 설계했습니다.",
+        "`Risk` 점수는 실패 비용, 자동화 강도, 사람 override 부재, 데이터 민감도, 부담 집중 집단을 반영하도록 설계했습니다.",
+        "따라서 `+18`, `+24` 같은 값은 통계적으로 추정된 계수가 아니라, 이론적 중요도를 구분하기 위한 초기 프로토타입 계층값입니다.",
+        `현재 evidenceStrength는 데이터 가용성(${labels.dataAvailability[payload.inputs.dataAvailability]}), 비교군 설계(${labels.counterfactualQuality[payload.inputs.counterfactualQuality]}), 측정설계(${labels.measurementPlan[payload.inputs.measurementPlan]}), 추적 가능성(${labels.timeCoverage[payload.inputs.timeCoverage]})을 반영합니다.`,
+        "논문 수준으로 가려면 다음 단계에서 전문가 판단 수집, 파일럿 데이터 보정, 민감도 분석을 통해 이 가중치를 calibration해야 합니다."
+      ];
+
+      $("methodologyNotes").innerHTML = methodologyNotes.map(text => `
+        <div class="item info">${text}</div>
+      `).join("");
     }
 
     function showUpdateBanner(payload) {
@@ -1510,10 +1595,17 @@
         "riskAccumulation",
         "guardrailStrength"
       ]);
+      const group4Done = groupHasValues([
+        "dataAvailability",
+        "counterfactualQuality",
+        "measurementPlan",
+        "timeCoverage"
+      ]);
 
       setStepStatus(1, group1Done, "입력중");
       setStepStatus(2, group2Done, group1Done ? "입력중" : "대기");
       setStepStatus(3, group3Done, group2Done ? "입력중" : "대기");
+      setStepStatus(4, group4Done, group3Done ? "입력중" : "대기");
     }
 
     function openNextGroup(currentGroupId) {
@@ -1528,7 +1620,8 @@
       const groupFields = {
         group1: ["caseName", "coreIssue", "sector", "population", "baseline"],
         group2: ["intervention", "failureCost", "benefitTarget", "burdenTarget", "override", "scale", "goal", "dataSensitivity"],
-        group3: ["scenarioMode", "adoptionSpeed", "effectMaturity", "dropoff", "riskAccumulation", "guardrailStrength"]
+        group3: ["scenarioMode", "adoptionSpeed", "effectMaturity", "dropoff", "riskAccumulation", "guardrailStrength"],
+        group4: ["dataAvailability", "counterfactualQuality", "measurementPlan", "timeCoverage"]
       };
 
       Object.entries(groupFields).forEach(([groupId, fields]) => {
@@ -1577,6 +1670,7 @@
       $("group1").open = false;
       $("group2").open = false;
       $("group3").open = false;
+      $("group4").open = false;
       render(payload);
       showUpdateBanner(payload);
       $("summaryMetrics").scrollIntoView({ behavior: "smooth", block: "start" });
