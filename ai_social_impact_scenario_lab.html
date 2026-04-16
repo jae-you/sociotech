@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sociotechnical Assessment</title>
+  <style>
+    :root {
+      --bg: #f3ede2;
+      --paper: #fffdf8;
+      --ink: #1e2b2d;
+      --muted: #647074;
+      --line: #d8cfbf;
+      --green: #165b47;
+      --green-soft: #e2f0e8;
+      --gold: #b9770e;
+      --gold-soft: #f5ead5;
+      --red: #a63b42;
+      --red-soft: #f4dfe0;
+      --blue: #275d7d;
+      --blue-soft: #e0edf5;
+      --shadow: 0 16px 40px rgba(54, 47, 38, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(22, 91, 71, 0.08), transparent 22%),
+        radial-gradient(circle at 85% 10%, rgba(185, 119, 14, 0.10), transparent 18%),
+        linear-gradient(180deg, #f8f4ec 0%, var(--bg) 100%);
+      font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif KR", serif;
+    }
+
+    a { color: var(--blue); }
+
+    .shell {
+      width: min(1340px, calc(100vw - 28px));
+      margin: 18px auto 36px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(255, 253, 248, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar {
+      padding: 20px;
+      position: sticky;
+      top: 16px;
+      height: fit-content;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      font-size: 40px;
+      line-height: 1.02;
+      margin-bottom: 10px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .hero p,
+    .sidebar p,
+    .subtle {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .manifesto {
+      display: grid;
+      gap: 10px;
+    }
+
+    .manifesto .line {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #f7f2e9;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fffdfa;
+      padding: 12px 13px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: transform 0.18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .secondary {
+      background: #ebe1cf;
+      color: var(--ink);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: 16px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .metric .value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .metric .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #faf6ee;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .item.good { background: var(--green-soft); }
+    .item.warn { background: var(--gold-soft); }
+    .item.bad { background: var(--red-soft); }
+    .item.info { background: var(--blue-soft); }
+
+    .impact-table {
+      display: grid;
+      gap: 12px;
+    }
+
+    .impact-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 100px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar {
+      height: 12px;
+      background: #eee5d7;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), #4c9b7d);
+    }
+
+    .fill.risk {
+      background: linear-gradient(90deg, var(--gold), var(--red));
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.good { background: var(--green-soft); color: var(--green); }
+    .pill.warn { background: var(--gold-soft); color: #8b5f13; }
+    .pill.bad { background: var(--red-soft); color: var(--red); }
+
+    .reference {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbf8f1;
+    }
+
+    .reference strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .projection-chart,
+    .stakeholder-chart {
+      display: grid;
+      gap: 12px;
+    }
+
+    .projection-row,
+    .stakeholder-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 84px 84px 84px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .stakeholder-row {
+      grid-template-columns: 150px 1fr 90px;
+    }
+
+    .stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #efe6d8;
+      position: relative;
+    }
+
+    .stack .positive {
+      background: linear-gradient(90deg, var(--green), #59a684);
+    }
+
+    .stack .negative {
+      background: linear-gradient(90deg, var(--gold), var(--red));
+    }
+
+    .small-metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1100px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero, .grid-2, .grid-3, .small-metric-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .impact-row, .projection-row, .stakeholder-row { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel sidebar">
+      <div class="eyebrow">Framing Input</div>
+      <h2 style="margin-bottom: 10px;">배치 전에 먼저 물어야 할 것</h2>
+      <p>기술 자체보다 먼저 문제구조, 기준선, 영향 분배를 입력합니다. 이 프로토타입은 그 정보를 바탕으로 배치의 사회적 결과를 예비적으로 해석합니다.</p>
+
+      <div class="field">
+        <label for="caseName">기술/프로그램 이름</label>
+        <input id="caseName" value="공공서비스 상담 AI" />
+      </div>
+      <div class="field">
+        <label for="coreIssue">현재 해결하려는 핵심 이슈</label>
+        <select id="coreIssue">
+          <option value="access_gap">접근성 격차</option>
+          <option value="service_delay">서비스 지연 / 병목</option>
+          <option value="quality_variation">품질 편차 / 오판</option>
+          <option value="worker_burden">현장 인력 부담 / 소진</option>
+          <option value="exclusion">배제 / 사각지대</option>
+          <option value="safety_risk">안전 / 위해 위험</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sector">분야</label>
+        <select id="sector">
+          <option value="public">공공서비스</option>
+          <option value="education">교육</option>
+          <option value="labor">노동/고용</option>
+          <option value="health">보건</option>
+          <option value="welfare">복지</option>
+          <option value="customer">기업 고객지원</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="population">주요 대상집단</label>
+        <select id="population">
+          <option value="general">일반 대중</option>
+          <option value="underserved">취약집단</option>
+          <option value="students">학생</option>
+          <option value="workers">현장 노동자</option>
+          <option value="public_staff">공공 실무자</option>
+          <option value="patients">환자/돌봄 수요자</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="baseline">현재 기준선 상황</label>
+        <select id="baseline">
+          <option value="fragile">이미 실패가 잦고 취약함</option>
+          <option value="mixed">성과와 문제점이 혼재</option>
+          <option value="stable">대체로 안정적이나 개선 여지 있음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="intervention">개입 방식</label>
+        <select id="intervention">
+          <option value="assist">보조/추천 중심</option>
+          <option value="hybrid">하이브리드 자동화</option>
+          <option value="auto">자동화 중심</option>
+          <option value="approval">사람 승인 후 실행</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="failureCost">실패 비용</label>
+        <select id="failureCost">
+          <option value="low">낮음</option>
+          <option value="medium">중간</option>
+          <option value="high">높음</option>
+          <option value="critical">치명적</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="benefitTarget">혜택이 가장 크게 돌아갈 집단</label>
+        <select id="benefitTarget">
+          <option value="end_users">직접 사용자 / 시민</option>
+          <option value="underserved">취약집단 / 소외집단</option>
+          <option value="workers">현장 실무자 / 노동자</option>
+          <option value="organization">조직 / 운영주체</option>
+          <option value="mixed">여러 집단에 분산</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="burdenTarget">실패 시 부담이 가장 크게 갈 집단</label>
+        <select id="burdenTarget">
+          <option value="end_users">직접 사용자 / 시민</option>
+          <option value="underserved">취약집단 / 소외집단</option>
+          <option value="workers">현장 실무자 / 노동자</option>
+          <option value="organization">조직 / 운영주체</option>
+          <option value="diffuse">광범위하게 분산</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="override">사람 override / 이의제기</label>
+        <select id="override">
+          <option value="strong">강함</option>
+          <option value="limited">제한적</option>
+          <option value="none">거의 없음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="scale">배포 규모</label>
+        <select id="scale">
+          <option value="pilot">파일럿</option>
+          <option value="org">기관 단위</option>
+          <option value="regional">지역/광역 단위</option>
+          <option value="national">전국 단위</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="goal">주요 기대효과</label>
+        <select id="goal">
+          <option value="access">접근성 향상</option>
+          <option value="efficiency">시간/비용 절감</option>
+          <option value="learning">학습/역량 강화</option>
+          <option value="safety">안전 향상</option>
+          <option value="wellbeing">복지/삶의 질</option>
+          <option value="equity">형평성 개선</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dataSensitivity">데이터 민감도</label>
+        <select id="dataSensitivity">
+          <option value="low">낮음</option>
+          <option value="medium">중간</option>
+          <option value="high">높음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="scenarioMode">Projection 시나리오</label>
+        <select id="scenarioMode">
+          <option value="base">기준 시나리오</option>
+          <option value="optimistic">낙관 시나리오</option>
+          <option value="pessimistic">비관 시나리오</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="adoptionSpeed">채택 속도</label>
+        <select id="adoptionSpeed">
+          <option value="moderate">중간</option>
+          <option value="slow">느림</option>
+          <option value="fast">빠름</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="effectMaturity">효과가 본격화되는 속도</label>
+        <select id="effectMaturity">
+          <option value="medium">중간</option>
+          <option value="early">빠름</option>
+          <option value="late">늦음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dropoff">효과 감소율</label>
+        <select id="dropoff">
+          <option value="medium">중간</option>
+          <option value="low">낮음</option>
+          <option value="high">높음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="riskAccumulation">위험 누적 속도</label>
+        <select id="riskAccumulation">
+          <option value="medium">중간</option>
+          <option value="low">낮음</option>
+          <option value="high">높음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="guardrailStrength">가드레일 강도</label>
+        <select id="guardrailStrength">
+          <option value="medium">중간</option>
+          <option value="strong">강함</option>
+          <option value="weak">약함</option>
+        </select>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" id="runButton">시나리오 생성</button>
+        <button class="secondary" id="downloadButton">결과 JSON</button>
+      </div>
+
+      <div class="footer-note">
+        이 도구는 "정답"을 판정하지 않습니다. 대신 어떤 가정 아래 어떤 사회적 결과와 위험이 예상되는지, 그리고 어떤 평가 프레임워크로 검토할 수 있는지를 구조화합니다.
+      </div>
+    </aside>
+
+    <main class="panel content">
+      <section class="hero">
+        <div class="card">
+          <div class="eyebrow">Sociotechnical Assessment</div>
+          <h1>AI를 어디에 어떻게 둘지보다<br>먼저 영향을 어떻게 나눌지 본다</h1>
+          <p>이 프로토타입은 기술 데모가 아니라 배치 해석 도구입니다. 문제의 기준선, 누가 이익을 얻고 누가 부담을 떠안을지, 그리고 어떤 인과경로를 통해 변화가 일어날지를 먼저 정리한 뒤, 그 결과를 <strong>Theory of Change</strong>, <strong>Impact Frontiers 5 Dimensions</strong>, <strong>NIST AI RMF</strong>, <strong>OECD AI Principles</strong>, <strong>SROI proxy</strong>와 연결합니다.</p>
+        </div>
+        <div class="card manifesto">
+          <div class="line">질문: 현재 시스템의 문제는 <strong>누구에게 어떤 손실을 만들고 있는가</strong></div>
+          <div class="line">비교: AI를 넣었을 때 <strong>혜택과 부담의 분배가 어떻게 바뀌는가</strong></div>
+          <div class="line">검증: 효율뿐 아니라 <strong>위험 전가와 책임 구조</strong>가 나아지는가</div>
+        </div>
+      </section>
+
+      <section class="grid-3" id="summaryMetrics"></section>
+
+      <section class="grid-2">
+        <div class="card">
+          <div class="eyebrow">Theory Of Change</div>
+          <div id="tocList" class="list"></div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Distributional Outlook</div>
+          <div id="scenarioList" class="list"></div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <div class="eyebrow">Five Dimensions Of Impact</div>
+          <div id="impactTable" class="impact-table"></div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Risks And Guardrails</div>
+          <div id="riskList" class="list"></div>
+          <div style="height: 12px;"></div>
+          <div class="eyebrow">SROI Proxy</div>
+          <div id="sroiBox" class="list"></div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-bottom: 16px;">
+        <div class="eyebrow">5-Year Projection</div>
+        <div id="projectionMetrics" class="small-metric-grid"></div>
+        <div style="height: 14px;"></div>
+        <div id="projectionChart" class="projection-chart"></div>
+      </section>
+
+      <section class="card" style="margin-bottom: 16px;">
+        <div class="eyebrow">Stakeholder Flow</div>
+        <div id="stakeholderChart" class="stakeholder-chart"></div>
+      </section>
+
+      <section class="card">
+        <div class="eyebrow">Academic And Practice References</div>
+        <div id="referenceList" class="list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    const labels = {
+      sector: {
+        public: "공공서비스",
+        education: "교육",
+        labor: "노동/고용",
+        health: "보건",
+        welfare: "복지",
+        customer: "기업 고객지원"
+      },
+      population: {
+        general: "일반 대중",
+        underserved: "취약집단",
+        students: "학생",
+        workers: "현장 노동자",
+        public_staff: "공공 실무자",
+        patients: "환자/돌봄 수요자"
+      },
+      coreIssue: {
+        access_gap: "접근성 격차",
+        service_delay: "서비스 지연 / 병목",
+        quality_variation: "품질 편차 / 오판",
+        worker_burden: "현장 인력 부담 / 소진",
+        exclusion: "배제 / 사각지대",
+        safety_risk: "안전 / 위해 위험"
+      },
+      baseline: {
+        fragile: "이미 실패가 잦고 취약함",
+        mixed: "성과와 문제점이 혼재",
+        stable: "대체로 안정적이나 개선 여지 있음"
+      },
+      intervention: {
+        assist: "보조/추천 중심",
+        hybrid: "하이브리드 자동화",
+        auto: "자동화 중심",
+        approval: "사람 승인 후 실행"
+      },
+      failureCost: {
+        low: "낮음",
+        medium: "중간",
+        high: "높음",
+        critical: "치명적"
+      },
+      benefitTarget: {
+        end_users: "직접 사용자 / 시민",
+        underserved: "취약집단 / 소외집단",
+        workers: "현장 실무자 / 노동자",
+        organization: "조직 / 운영주체",
+        mixed: "여러 집단에 분산"
+      },
+      burdenTarget: {
+        end_users: "직접 사용자 / 시민",
+        underserved: "취약집단 / 소외집단",
+        workers: "현장 실무자 / 노동자",
+        organization: "조직 / 운영주체",
+        diffuse: "광범위하게 분산"
+      },
+      override: {
+        strong: "강함",
+        limited: "제한적",
+        none: "거의 없음"
+      },
+      scale: {
+        pilot: "파일럿",
+        org: "기관 단위",
+        regional: "지역/광역 단위",
+        national: "전국 단위"
+      },
+      goal: {
+        access: "접근성 향상",
+        efficiency: "시간/비용 절감",
+        learning: "학습/역량 강화",
+        safety: "안전 향상",
+        wellbeing: "복지/삶의 질",
+        equity: "형평성 개선"
+      },
+      dataSensitivity: {
+        low: "낮음",
+        medium: "중간",
+        high: "높음"
+      },
+      scenarioMode: {
+        base: "기준 시나리오",
+        optimistic: "낙관 시나리오",
+        pessimistic: "비관 시나리오"
+      },
+      adoptionSpeed: {
+        slow: "느림",
+        moderate: "중간",
+        fast: "빠름"
+      },
+      effectMaturity: {
+        early: "빠름",
+        medium: "중간",
+        late: "늦음"
+      },
+      dropoff: {
+        low: "낮음",
+        medium: "중간",
+        high: "높음"
+      },
+      riskAccumulation: {
+        low: "낮음",
+        medium: "중간",
+        high: "높음"
+      },
+      guardrailStrength: {
+        weak: "약함",
+        medium: "중간",
+        strong: "강함"
+      }
+    };
+
+    const sectorOutcomes = {
+      public: ["민원 처리 시간 단축", "서비스 포기 감소", "행정접근성 개선"],
+      education: ["학습 지속성 증가", "기초역량 향상", "교육격차 완화"],
+      labor: ["작업 실수 감소", "노동자 통제권 변화", "이직 및 번아웃 변화"],
+      health: ["초기 선별 개선", "대기와 누락 감소", "환자 이해도 향상"],
+      welfare: ["복지정보 접근성 향상", "지원 누락 감소", "사례관리 효율 향상"],
+      customer: ["응답 속도 향상", "고객 불만 감소", "상담원 부담 재배분"]
+    };
+
+    const goalBoosts = {
+      access: { what: 15, who: 12, howMuch: 8, contribution: 6, risk: -2 },
+      efficiency: { what: 8, who: 2, howMuch: 10, contribution: 7, risk: 4 },
+      learning: { what: 10, who: 6, howMuch: 11, contribution: 8, risk: -1 },
+      safety: { what: 11, who: 4, howMuch: 8, contribution: 6, risk: -6 },
+      wellbeing: { what: 9, who: 7, howMuch: 10, contribution: 7, risk: -2 },
+      equity: { what: 8, who: 16, howMuch: 8, contribution: 5, risk: -4 }
+    };
+
+    function collectInputs() {
+      return {
+        caseName: $("caseName").value.trim() || "Unnamed AI System",
+        coreIssue: $("coreIssue").value,
+        sector: $("sector").value,
+        population: $("population").value,
+        baseline: $("baseline").value,
+        intervention: $("intervention").value,
+        failureCost: $("failureCost").value,
+        benefitTarget: $("benefitTarget").value,
+        burdenTarget: $("burdenTarget").value,
+        override: $("override").value,
+        scale: $("scale").value,
+        goal: $("goal").value,
+        dataSensitivity: $("dataSensitivity").value,
+        scenarioMode: $("scenarioMode").value,
+        adoptionSpeed: $("adoptionSpeed").value,
+        effectMaturity: $("effectMaturity").value,
+        dropoff: $("dropoff").value,
+        riskAccumulation: $("riskAccumulation").value,
+        guardrailStrength: $("guardrailStrength").value
+      };
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function scoreImpact(inputs) {
+      let what = 50;
+      let who = 45;
+      let howMuch = 50;
+      let contribution = 45;
+      let risk = 35;
+
+      if (inputs.coreIssue === "access_gap") {
+        who += 10;
+        contribution += 5;
+      }
+      if (inputs.coreIssue === "service_delay") {
+        howMuch += 12;
+      }
+      if (inputs.coreIssue === "quality_variation") {
+        what += 8;
+        risk += 8;
+      }
+      if (inputs.coreIssue === "worker_burden") {
+        contribution += 6;
+        if (inputs.benefitTarget === "workers") who += 8;
+      }
+      if (inputs.coreIssue === "exclusion") {
+        who += 14;
+        risk += 5;
+      }
+      if (inputs.coreIssue === "safety_risk") {
+        what += 8;
+        risk += 14;
+      }
+
+      if (inputs.population === "underserved") who += 18;
+      if (inputs.population === "students") howMuch += 8;
+      if (inputs.population === "workers") risk += 10;
+      if (inputs.population === "patients") risk += 12;
+
+      if (inputs.baseline === "fragile") {
+        contribution += 10;
+        risk += 6;
+      }
+      if (inputs.baseline === "mixed") {
+        contribution += 4;
+      }
+      if (inputs.baseline === "stable") {
+        contribution -= 4;
+      }
+
+      if (inputs.intervention === "assist") {
+        what += 8;
+        contribution += 6;
+        risk -= 8;
+      }
+      if (inputs.intervention === "hybrid") {
+        what += 10;
+        howMuch += 8;
+        risk += 2;
+      }
+      if (inputs.intervention === "auto") {
+        howMuch += 14;
+        contribution += 4;
+        risk += 18;
+      }
+      if (inputs.intervention === "approval") {
+        what += 7;
+        contribution += 9;
+        risk -= 12;
+      }
+
+      if (inputs.failureCost === "low") risk -= 6;
+      if (inputs.failureCost === "medium") risk += 2;
+      if (inputs.failureCost === "high") risk += 16;
+      if (inputs.failureCost === "critical") risk += 24;
+
+      if (inputs.override === "strong") {
+        contribution += 10;
+        risk -= 14;
+      }
+      if (inputs.override === "limited") {
+        contribution += 3;
+        risk += 2;
+      }
+      if (inputs.override === "none") {
+        contribution -= 8;
+        risk += 20;
+      }
+
+      if (inputs.scale === "pilot") {
+        contribution += 4;
+        risk -= 6;
+      }
+      if (inputs.scale === "org") {
+        howMuch += 5;
+        risk += 2;
+      }
+      if (inputs.scale === "regional") {
+        howMuch += 8;
+        risk += 6;
+      }
+      if (inputs.scale === "national") {
+        howMuch += 14;
+        risk += 14;
+      }
+
+      if (inputs.dataSensitivity === "medium") risk += 5;
+      if (inputs.dataSensitivity === "high") risk += 14;
+
+      if (inputs.benefitTarget === "underserved") who += 12;
+      if (inputs.benefitTarget === "workers") contribution += 5;
+      if (inputs.benefitTarget === "organization") howMuch += 4;
+      if (inputs.benefitTarget === "mixed") {
+        who += 4;
+        contribution += 3;
+      }
+
+      if (inputs.burdenTarget === "underserved") risk += 16;
+      if (inputs.burdenTarget === "workers") risk += 14;
+      if (inputs.burdenTarget === "end_users") risk += 10;
+      if (inputs.burdenTarget === "diffuse") risk += 6;
+
+      const boost = goalBoosts[inputs.goal];
+      what += boost.what;
+      who += boost.who;
+      howMuch += boost.howMuch;
+      contribution += boost.contribution;
+      risk += boost.risk;
+
+      return {
+        what: clamp(what, 0, 100),
+        who: clamp(who, 0, 100),
+        howMuch: clamp(howMuch, 0, 100),
+        contribution: clamp(contribution, 0, 100),
+        risk: clamp(risk, 0, 100)
+      };
+    }
+
+    function deriveSummary(inputs, impact) {
+      const socialFit = Math.round((impact.what + impact.who + impact.howMuch + impact.contribution) / 4);
+      const governanceReadiness = clamp(
+        Math.round((impact.contribution + (100 - impact.risk) + (inputs.override === "strong" ? 12 : inputs.override === "limited" ? 0 : -12)) / 2),
+        0,
+        100
+      );
+      const evidenceStrength = clamp(
+        Math.round(
+          40 +
+          (inputs.scale === "pilot" ? 8 : inputs.scale === "org" ? 4 : 0) +
+          (inputs.intervention === "approval" || inputs.intervention === "assist" ? 10 : 2) +
+          (inputs.failureCost === "critical" ? -8 : 4)
+        ),
+        0,
+        100
+      );
+
+      let verdict = "조건부 검토 가능";
+      if (socialFit >= 72 && impact.risk <= 40) verdict = "사회적 유의미성 높음";
+      if (impact.risk >= 65) verdict = "위험 통제 전에는 정당화 어려움";
+      if (impact.who < 50 && inputs.population === "underserved") verdict = "형평성 설계 재검토 필요";
+      if (inputs.burdenTarget === "underserved" && impact.risk >= 50) verdict = "취약집단 부담 전가 우려 큼";
+
+      return { socialFit, governanceReadiness, evidenceStrength, verdict };
+    }
+
+    function generateTheoryOfChange(inputs) {
+      const target = labels.population[inputs.population];
+      const sectorName = labels.sector[inputs.sector];
+      const mode = labels.intervention[inputs.intervention];
+      const goal = labels.goal[inputs.goal];
+      const issue = labels.coreIssue[inputs.coreIssue];
+      const baseline = labels.baseline[inputs.baseline];
+      const benefitTarget = labels.benefitTarget[inputs.benefitTarget];
+      const burdenTarget = labels.burdenTarget[inputs.burdenTarget];
+      const outcomes = sectorOutcomes[inputs.sector];
+
+      return [
+        `출발점: ${sectorName} 영역의 현재 핵심 이슈는 ${issue}이며, 기준선은 '${baseline}' 상태로 가정한다.`,
+        `${inputs.caseName}은 ${target}을 주된 대상으로 ${mode} 방식으로 개입하며, 우선적으로 ${goal}을 개선하려고 한다.`,
+        `직접 효과는 ${outcomes[0]} 및 ${outcomes[1]}에 나타나겠지만, 실제 순효과는 혜택이 ${benefitTarget}에게 얼마나 돌아가고 부담이 ${burdenTarget}에게 얼마나 전가되는지에 달려 있다.`,
+        `중간 결과 수준에서는 이용 지속성, 체감 통제권, 현장 부담 재배분, 예외 상황 처리의 질이 핵심 인과 매개 변수로 작동한다.`,
+        `장기적으로는 ${outcomes[2]}를 포함한 공공가치 개선을 주장할 수 있지만, 이는 override, 이의제기, 접근성 보정, 데이터 거버넌스가 실제로 작동한다는 전제에서만 성립한다.`
+      ];
+    }
+
+    function generateScenarioOutlook(inputs, impact) {
+      const items = [];
+
+      items.push({
+        cls: "good",
+        text: `기준 시나리오: ${labels.goal[inputs.goal]}를 중심으로 사회적 성과가 발생할 가능성이 있으며, 특히 ${sectorOutcomes[inputs.sector][0]} 측면에서 초기 체감 효과를 설명하기 쉽습니다.`
+      });
+
+      if (inputs.benefitTarget !== inputs.burdenTarget && inputs.burdenTarget !== "diffuse") {
+        items.push({
+          cls: "warn",
+          text: `분배 시나리오: 혜택은 ${labels.benefitTarget[inputs.benefitTarget]}에게 집중되는 반면, 실패 부담은 ${labels.burdenTarget[inputs.burdenTarget]}에게 더 크게 돌아갈 수 있습니다.`
+        });
+      }
+
+      if (impact.risk >= 60) {
+        items.push({
+          cls: "bad",
+          text: "실패 시나리오: 오류나 배제가 발생했을 때 피해가 취약한 사용자나 현장 실무자에게 전가될 가능성이 큽니다."
+        });
+      } else {
+        items.push({
+          cls: "warn",
+          text: "보수 시나리오: 초기 성과는 제한적일 수 있으나, 가드레일이 유지된다면 장기 정당성을 확보할 여지가 있습니다."
+        });
+      }
+
+      if (inputs.population === "underserved" || inputs.goal === "equity") {
+        items.push({
+          cls: "info",
+          text: "형평성 시나리오: 접근성 보정이 실제로 적용되면 소외집단의 혜택 비중을 일반 사용자보다 더 높게 설계할 수 있습니다."
+        });
+      } else {
+        items.push({
+          cls: "info",
+          text: "확산 시나리오: 일반 사용자 성과는 빠르게 보일 수 있지만, 분배 효과와 형평성은 별도로 검증해야 합니다."
+        });
+      }
+
+      return items;
+    }
+
+    function generateRisks(inputs, impact) {
+      const risks = [];
+
+      if (inputs.override === "none") {
+        risks.push("사람이 AI 판단을 뒤집기 어렵기 때문에 contestability가 약합니다.");
+      }
+      if (inputs.failureCost === "high" || inputs.failureCost === "critical") {
+        risks.push("오류 비용이 높아 단순 정확도보다 사전 차단 및 예외처리 설계가 더 중요합니다.");
+      }
+      if (inputs.dataSensitivity === "high") {
+        risks.push("민감정보 처리로 인해 프라이버시와 2차 활용에 대한 사회적 반발이 커질 수 있습니다.");
+      }
+      if (inputs.intervention === "auto") {
+        risks.push("자동화 중심 배치는 효율을 높이지만, 책임 전가와 사용자 배제 위험을 같이 키웁니다.");
+      }
+      if (inputs.scale === "national") {
+        risks.push("전국 단위 확산은 작은 설계 결함도 대규모 사회적 피해로 확대시킬 수 있습니다.");
+      }
+      if (inputs.burdenTarget === "workers") {
+        risks.push("실패 부담이 현장 실무자에게 집중되면, 기술 도입 성과가 현장 수용성 저하로 상쇄될 수 있습니다.");
+      }
+      if (inputs.burdenTarget === "underserved") {
+        risks.push("취약집단이 실패 비용을 더 크게 부담하는 구조라면, 형평성 개선 주장 자체가 약화됩니다.");
+      }
+      if (!risks.length) {
+        risks.push("주요 위험은 비교적 관리 가능해 보이지만, 초기 파일럿 단계에서 반례 사례를 집중 수집해야 합니다.");
+      }
+
+      const guardrails = [];
+      if (inputs.override !== "strong") {
+        guardrails.push("사람 override 및 이의제기 절차를 명시적 인터페이스로 제공");
+      }
+      if (inputs.population === "underserved") {
+        guardrails.push("취약집단 전용 우회경로와 사람 연결 채널 보장");
+      }
+      if (inputs.burdenTarget === "workers") {
+        guardrails.push("현장 실무자가 AI 결정을 거부·수정할 수 있는 실질 권한과 보호장치 명시");
+      }
+      if (inputs.failureCost === "high" || inputs.failureCost === "critical") {
+        guardrails.push("고위험 결정은 사람 승인 후 실행 또는 샘플링 감사를 의무화");
+      }
+      if (inputs.dataSensitivity !== "low") {
+        guardrails.push("목적 제한, 최소수집, 보관기간 명시 등 데이터 거버넌스 강화");
+      }
+      if (inputs.intervention === "auto") {
+        guardrails.push("완전자동 의사결정 대신 단계적 배치와 예외 케이스 모니터링");
+      }
+      if (!guardrails.length) {
+        guardrails.push("초기 파일럿 동안 정성 인터뷰와 incident logging을 병행");
+      }
+
+      return { risks, guardrails, riskScore: impact.risk };
+    }
+
+    function buildSROIProxy(inputs, impact, summary) {
+      let returnBand = "불확실";
+      let rationale = "사회적 가치 환산은 추가적인 실측 데이터가 필요합니다.";
+
+      if (summary.socialFit >= 72 && impact.risk <= 40) {
+        returnBand = "잠재적 양수";
+        rationale = "예상 수혜 강도와 분배 효과가 높고 위험이 관리 가능해, SROI 관점에서 긍정적 가설을 세우기 좋습니다.";
+      } else if (impact.risk >= 65) {
+        returnBand = "과대추정 위험";
+        rationale = "부정적 외부효과와 피해구제 비용을 반영하면 표면적 효율보다 순가치가 낮아질 수 있습니다.";
+      } else if (inputs.goal === "equity" || inputs.population === "underserved") {
+        returnBand = "조건부 양수";
+        rationale = "형평성 편익을 반영하면 사회적 가치가 커질 수 있으나, 도달률과 유지율 근거가 필요합니다.";
+      }
+      if (inputs.burdenTarget === "underserved" || inputs.burdenTarget === "workers") {
+        rationale += " 다만 부담 집중 집단에 대한 부정적 외부효과 비용을 반드시 차감해야 합니다.";
+      }
+
+      const proxies = [];
+      if (inputs.sector === "public" || inputs.sector === "welfare") proxies.push("행정 접근성 개선, 누락 감소, 재접수 감소");
+      if (inputs.sector === "education") proxies.push("학습 지속성, 기초역량 향상, 교사 보조 효과");
+      if (inputs.sector === "labor") proxies.push("안전사고 회피, 번아웃 완화, 숙련 유지");
+      if (inputs.sector === "health") proxies.push("누락 감소, 조기 개입, 환자 이해도 향상");
+      if (inputs.sector === "customer") proxies.push("응답시간 단축, 상담원 부담 완화, 재문의 감소");
+
+      return { returnBand, rationale, proxies };
+    }
+
+    function adoptionCurve(speed, mode) {
+      const base = {
+        slow: [0.14, 0.26, 0.38, 0.48, 0.56],
+        moderate: [0.20, 0.36, 0.52, 0.64, 0.72],
+        fast: [0.28, 0.48, 0.66, 0.78, 0.86]
+      }[speed].slice();
+
+      if (mode === "optimistic") return base.map(v => Math.min(0.95, v + 0.08));
+      if (mode === "pessimistic") return base.map(v => Math.max(0.08, v - 0.08));
+      return base;
+    }
+
+    function maturityCurve(speed, mode) {
+      const base = {
+        early: [0.68, 0.88, 1.00, 1.02, 1.00],
+        medium: [0.50, 0.72, 0.90, 0.97, 1.00],
+        late: [0.34, 0.55, 0.72, 0.88, 0.96]
+      }[speed].slice();
+
+      if (mode === "optimistic") return base.map(v => Math.min(1.1, v + 0.06));
+      if (mode === "pessimistic") return base.map(v => Math.max(0.2, v - 0.06));
+      return base;
+    }
+
+    function dropoffRate(level) {
+      return { low: 0.03, medium: 0.07, high: 0.12 }[level];
+    }
+
+    function riskRate(level) {
+      return { low: 0.05, medium: 0.10, high: 0.16 }[level];
+    }
+
+    function guardrailFactor(level) {
+      return { weak: 0.88, medium: 0.72, strong: 0.55 }[level];
+    }
+
+    function stakeholderWeights(inputs) {
+      const benefit = {
+        end_users: { endUsers: 0.48, underserved: 0.12, workers: 0.18, organization: 0.22 },
+        underserved: { endUsers: 0.18, underserved: 0.50, workers: 0.12, organization: 0.20 },
+        workers: { endUsers: 0.12, underserved: 0.08, workers: 0.58, organization: 0.22 },
+        organization: { endUsers: 0.14, underserved: 0.08, workers: 0.18, organization: 0.60 },
+        mixed: { endUsers: 0.30, underserved: 0.20, workers: 0.20, organization: 0.30 }
+      }[inputs.benefitTarget];
+
+      const burden = {
+        end_users: { endUsers: 0.52, underserved: 0.14, workers: 0.20, organization: 0.14 },
+        underserved: { endUsers: 0.10, underserved: 0.58, workers: 0.16, organization: 0.16 },
+        workers: { endUsers: 0.12, underserved: 0.12, workers: 0.58, organization: 0.18 },
+        organization: { endUsers: 0.10, underserved: 0.08, workers: 0.16, organization: 0.66 },
+        diffuse: { endUsers: 0.28, underserved: 0.22, workers: 0.24, organization: 0.26 }
+      }[inputs.burdenTarget];
+
+      return { benefit, burden };
+    }
+
+    function buildProjection(inputs, impact, summary) {
+      const adoption = adoptionCurve(inputs.adoptionSpeed, inputs.scenarioMode);
+      const maturity = maturityCurve(inputs.effectMaturity, inputs.scenarioMode);
+      const dropoff = dropoffRate(inputs.dropoff);
+      const riskAccumulation = riskRate(inputs.riskAccumulation);
+      const guardrail = guardrailFactor(inputs.guardrailStrength);
+
+      const baseBenefit = ((impact.what + impact.who + impact.howMuch + impact.contribution) / 4) / 100 * 120;
+      const baseCost = (impact.risk / 100) * 70;
+      const stakeholder = stakeholderWeights(inputs);
+      const years = [];
+
+      for (let i = 0; i < 5; i += 1) {
+        const year = i + 1;
+        const effectDecay = Math.max(0.55, 1 - dropoff * i);
+        const benefit = +(baseBenefit * adoption[i] * maturity[i] * effectDecay).toFixed(1);
+        const riskGrowth = 1 + riskAccumulation * i;
+        const cost = +(baseCost * adoption[i] * riskGrowth * guardrail).toFixed(1);
+        const net = +(benefit - cost).toFixed(1);
+
+        years.push({
+          year,
+          adoption: +(adoption[i] * 100).toFixed(0),
+          benefit,
+          cost,
+          net
+        });
+      }
+
+      const turningPoint = years.find(y => y.net < 0);
+      const cumulativeNet = +years.reduce((acc, year) => acc + year.net, 0).toFixed(1);
+      const cumulativeBenefit = +years.reduce((acc, year) => acc + year.benefit, 0).toFixed(1);
+      const cumulativeCost = +years.reduce((acc, year) => acc + year.cost, 0).toFixed(1);
+
+      const stakeholderTotals = [
+        { key: "endUsers", label: "직접 사용자 / 시민" },
+        { key: "underserved", label: "취약집단 / 소외집단" },
+        { key: "workers", label: "현장 실무자 / 노동자" },
+        { key: "organization", label: "조직 / 운영주체" }
+      ].map(item => {
+        const benefit = +(cumulativeBenefit * stakeholder.benefit[item.key]).toFixed(1);
+        const burden = +(cumulativeCost * stakeholder.burden[item.key]).toFixed(1);
+        const net = +(benefit - burden).toFixed(1);
+        return { ...item, benefit, burden, net };
+      });
+
+      return {
+        years,
+        cumulativeNet,
+        cumulativeBenefit,
+        cumulativeCost,
+        turningPoint: turningPoint ? `Year ${turningPoint.year}` : "없음",
+        stakeholderTotals
+      };
+    }
+
+    function buildReferences(inputs) {
+      return [
+        {
+          title: "Theory of Change",
+          why: "기술 개입이 어떻게 단기·중기·장기 결과로 이어지는지 인과 경로를 설명하는 데 사용",
+          link: "https://www.theoryofchange.org/what-is-theory-of-change/how-does-theory-of-change-work/"
+        },
+        {
+          title: "Impact Frontiers / Five Dimensions of Impact",
+          why: "What, Who, How Much, Contribution, Risk 구조로 사회적 결과를 정리하는 기본 프레임",
+          link: "https://impactfrontiers.org/norms/five-dimensions-of-impact/"
+        },
+        {
+          title: "NIST AI Risk Management Framework 1.0",
+          why: "사회적 가치가 있어도 위험 통제가 부족하면 배치를 정당화하기 어렵다는 기준 제공",
+          link: "https://www.nist.gov/itl/ai-risk-management-framework"
+        },
+        {
+          title: "OECD AI Principles",
+          why: "포용적 성장, 인간 중심성, 투명성, 책임성을 국제적 규범 층위에서 연결",
+          link: "https://www.oecd.org/en/topics/ai-principles.html"
+        },
+        {
+          title: "Guide to SROI",
+          why: "예상 사회성과를 가치 환산 논리와 연결할 때 참고할 수 있는 대표 프레임워크",
+          link: "https://www.socialvalueint.org/guide-to-sroi"
+        },
+        {
+          title: "Projection Logic: drop-off, attribution, displacement",
+          why: "시간에 따라 효과가 감소하거나 다른 집단 비용으로 전가되는 현상을 해석하는 데 중요",
+          link: "https://www.socialvalueint.org/guide-to-sroi"
+        },
+        {
+          title: "Fairness and Abstraction in Sociotechnical Systems",
+          why: "모델 수준 추상화만으로는 사회적 공정성을 설명할 수 없다는 학술적 근거",
+          link: "https://www.microsoft.com/en-us/research/publication/fairness-and-abstraction-in-sociotechnical-systems/"
+        },
+        {
+          title: "Closing the AI Accountability Gap",
+          why: "모델 점수 대신 end-to-end system audit가 필요하다는 관점을 뒷받침",
+          link: "https://ainowinstitute.org/publications/closing-the-ai-accountability-gap-defining-an-end-to-end-framework-for"
+        }
+      ];
+    }
+
+    function render(payload) {
+      const summary = payload.summary;
+      const summaryCards = [
+        {
+          label: "사회적 적합성",
+          value: summary.socialFit,
+          hint: "문제 적합성, 대상 적합성, 변화 강도를 종합한 값"
+        },
+        {
+          label: "거버넌스 준비도",
+          value: summary.governanceReadiness,
+          hint: "사람 개입권, 위험, 배치 방식 기준"
+        },
+        {
+          label: "주장 가능성",
+          value: summary.evidenceStrength,
+          hint: "현재 설계만으로 학술·정책 주장에 쓸 수 있는 강도"
+        }
+      ];
+
+      $("summaryMetrics").innerHTML = summaryCards.map(card => `
+        <div class="metric">
+          <div class="label">${card.label}</div>
+          <div class="value">${card.value}</div>
+          <div class="hint">${card.hint}</div>
+        </div>
+      `).join("") + `
+        <div class="metric">
+          <div class="label">종합 판단</div>
+          <div class="value" style="font-size:22px;">${summary.verdict}</div>
+          <div class="hint">도덕적 판정이 아니라 현재 가정 아래의 예비적 판단입니다.</div>
+        </div>
+      `;
+
+      $("tocList").innerHTML = payload.theoryOfChange.map(line => `
+        <div class="item info">${line}</div>
+      `).join("");
+
+      $("scenarioList").innerHTML = payload.scenarioOutlook.map(item => `
+        <div class="item ${item.cls}">${item.text}</div>
+      `).join("");
+
+      const impactRows = [
+        ["What", payload.impact.what, "기술이 만드는 결과의 질과 방향"],
+        ["Who", payload.impact.who, "혜택이 누구에게 얼마나 분배되는가"],
+        ["How Much", payload.impact.howMuch, "변화의 강도와 규모"],
+        ["Contribution", payload.impact.contribution, "없었을 때보다 실제로 더 나아졌는가"],
+        ["Risk", payload.impact.risk, "부정적 결과와 외부효과 가능성"]
+      ];
+
+      $("impactTable").innerHTML = impactRows.map(([name, value, desc]) => `
+        <div class="impact-row">
+          <div><strong>${name}</strong><div class="subtle">${desc}</div></div>
+          <div class="bar"><div class="fill ${name === "Risk" ? "risk" : ""}" style="width:${value}%;"></div></div>
+          <div>${value}</div>
+        </div>
+      `).join("");
+
+      const riskItems = payload.risks.risks.map(text => `<div class="item bad">${text}</div>`).join("");
+      const guardrailItems = payload.risks.guardrails.map(text => `<div class="item good">${text}</div>`).join("");
+      $("riskList").innerHTML = riskItems + guardrailItems;
+
+      $("sroiBox").innerHTML = `
+        <div class="item warn"><strong>${payload.sroi.returnBand}</strong><br>${payload.sroi.rationale}</div>
+        <div class="item info"><strong>가능한 가치 프록시</strong><br>${payload.sroi.proxies.join(", ")}</div>
+      `;
+
+      $("referenceList").innerHTML = payload.references.map(ref => `
+        <div class="reference">
+          <strong>${ref.title}</strong>
+          <div class="subtle">${ref.why}</div>
+          <div style="margin-top:6px;"><a href="${ref.link}" target="_blank" rel="noreferrer">${ref.link}</a></div>
+        </div>
+      `).join("");
+
+      $("projectionMetrics").innerHTML = `
+        <div class="metric">
+          <div class="label">5년 누적 편익</div>
+          <div class="value">${payload.projection.cumulativeBenefit}</div>
+          <div class="hint">projection 상의 총 사회적 편익 흐름</div>
+        </div>
+        <div class="metric">
+          <div class="label">5년 누적 비용</div>
+          <div class="value">${payload.projection.cumulativeCost}</div>
+          <div class="hint">위험, 보완, 반작용 비용의 추정 흐름</div>
+        </div>
+        <div class="metric">
+          <div class="label">5년 누적 순효과</div>
+          <div class="value">${payload.projection.cumulativeNet}</div>
+          <div class="hint">누적 편익 - 누적 비용</div>
+        </div>
+        <div class="metric">
+          <div class="label">Turning Point</div>
+          <div class="value">${payload.projection.turningPoint}</div>
+          <div class="hint">순효과가 음수로 바뀌는 첫 시점</div>
+        </div>
+        <div class="metric">
+          <div class="label">채택 시나리오</div>
+          <div class="value" style="font-size:22px;">${labels.scenarioMode[payload.inputs.scenarioMode]}</div>
+          <div class="hint">${labels.adoptionSpeed[payload.inputs.adoptionSpeed]} 채택 · ${labels.effectMaturity[payload.inputs.effectMaturity]} 효과 발현</div>
+        </div>
+        <div class="metric">
+          <div class="label">리스크 조건</div>
+          <div class="value" style="font-size:22px;">${labels.riskAccumulation[payload.inputs.riskAccumulation]} 누적</div>
+          <div class="hint">${labels.guardrailStrength[payload.inputs.guardrailStrength]} 가드레일 · ${labels.dropoff[payload.inputs.dropoff]} drop-off</div>
+        </div>
+      `;
+
+      $("projectionChart").innerHTML = payload.projection.years.map(row => `
+        <div class="projection-row">
+          <div><strong>Year ${row.year}</strong><div class="subtle">채택 ${row.adoption}%</div></div>
+          <div class="stack">
+            <div class="positive" style="width:${Math.min(100, row.benefit)}%;"></div>
+            <div class="negative" style="width:${Math.min(100, row.cost)}%;"></div>
+          </div>
+          <div>편익 ${row.benefit}</div>
+          <div>비용 ${row.cost}</div>
+          <div>순효과 ${row.net}</div>
+        </div>
+      `).join("");
+
+      $("stakeholderChart").innerHTML = payload.projection.stakeholderTotals.map(row => `
+        <div class="stakeholder-row">
+          <div><strong>${row.label}</strong></div>
+          <div class="stack">
+            <div class="positive" style="width:${Math.min(100, row.benefit)}%;"></div>
+            <div class="negative" style="width:${Math.min(100, row.burden)}%;"></div>
+          </div>
+          <div>순효과 ${row.net}</div>
+        </div>
+      `).join("");
+    }
+
+    function generatePayload() {
+      const inputs = collectInputs();
+      const impact = scoreImpact(inputs);
+      const summary = deriveSummary(inputs, impact);
+      const theoryOfChange = generateTheoryOfChange(inputs);
+      const scenarioOutlook = generateScenarioOutlook(inputs, impact);
+      const risks = generateRisks(inputs, impact);
+      const sroi = buildSROIProxy(inputs, impact, summary);
+      const projection = buildProjection(inputs, impact, summary);
+      const references = buildReferences(inputs);
+
+      return {
+        generatedAt: new Date().toISOString(),
+        inputs,
+        impact,
+        summary,
+        theoryOfChange,
+        scenarioOutlook,
+        risks,
+        sroi,
+        projection,
+        references
+      };
+    }
+
+    function runScenario() {
+      const payload = generatePayload();
+      window.lastScenarioPayload = payload;
+      render(payload);
+    }
+
+    function downloadJson() {
+      const payload = window.lastScenarioPayload || generatePayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${payload.inputs.caseName.replace(/\s+/g, "_")}_scenario_lab.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    $("runButton").addEventListener("click", runScenario);
+    $("downloadButton").addEventListener("click", downloadJson);
+
+    runScenario();
+  </script>
+</body>
+</html>
